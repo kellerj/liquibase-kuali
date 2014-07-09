@@ -1,7 +1,6 @@
 package liquibase.ext.ucd.workflow;
 
 import liquibase.database.Database;
-import liquibase.database.core.OracleDatabase;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -10,11 +9,13 @@ import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 
 public class ImportWorkflowGenerator extends AbstractSqlGenerator<ImportWorkflowStatement> {
 
-    public boolean supports(ImportWorkflowStatement truncateStatement, Database database) {
-        return database instanceof OracleDatabase;
+    @Override
+	public boolean supports(ImportWorkflowStatement truncateStatement, Database database) {
+        return true;
     }
 
-    public ValidationErrors validate(ImportWorkflowStatement truncateStatement,
+    @Override
+	public ValidationErrors validate(ImportWorkflowStatement truncateStatement,
                                      Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors errors = new ValidationErrors();
 
@@ -27,7 +28,8 @@ public class ImportWorkflowGenerator extends AbstractSqlGenerator<ImportWorkflow
         return errors;
     }
 
-    public Sql[] generateSql(ImportWorkflowStatement truncateStatement,
+    @Override
+	public Sql[] generateSql(ImportWorkflowStatement truncateStatement,
                              Database database, SqlGeneratorChain sqlGeneratorChain) {
         boolean noTable = truncateStatement.getTableName() == null || truncateStatement.getTableName().length() == 0;
         boolean noCluster = truncateStatement.getClusterName() == null || truncateStatement.getClusterName().length() == 0;

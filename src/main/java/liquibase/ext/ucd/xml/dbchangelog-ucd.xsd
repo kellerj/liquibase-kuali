@@ -5,6 +5,14 @@
             xmlns="http://www.liquibase.org/xml/ns/dbchangelog-ucd"
             elementFormDefault="qualified">
 
+    <xsd:element name="importWorkflow">
+        <xsd:complexType>
+	        <xsd:attribute name="relativeToChangeSet" type="xsd:boolean" default="true"/>
+	        <xsd:attribute name="fileName" type="xsd:string"/>
+	        <xsd:attribute name="directoryName" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
 <!-- 
     <xsd:attributeGroup name="constraintState">
         <xsd:attribute name="disable" type="xsd:boolean"/>
