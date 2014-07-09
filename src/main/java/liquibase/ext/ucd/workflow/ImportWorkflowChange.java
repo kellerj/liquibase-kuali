@@ -33,6 +33,8 @@ public class ImportWorkflowChange extends AbstractChange {
     private String directoryName;
     private Boolean relativeToChangeLogFile = Boolean.TRUE;
 
+
+
     @Override
     public boolean supports(Database database) {
     	return database instanceof OracleDatabase;
@@ -99,10 +101,12 @@ public class ImportWorkflowChange extends AbstractChange {
 
         String relativeTo = null;
         if (getRelativeToChangeLogFile()) {
-            relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
+            relativeTo = getChangeSet().getChangeLog().getLogicalFilePath();
         }
-
-        Set<String> unsortedResources = getResourceAccessor().list(relativeTo, directoryName, true, false, true);
+//        System.out.println( "Resolving paths relative to: " + relativeTo );
+//        System.out.println( getResourceAccessor() );
+//        FileSystemResourceAccessor ra = new FileSystemResourceAccessor( System.getProperty("user.dir") );
+        Set<String> unsortedResources = getResourceAccessor().list(null, relativeTo + "/" + directoryName, true, false, false);
         SortedSet<String> resources = new TreeSet<String>();
         if (unsortedResources != null) {
             for (String resourcePath : unsortedResources) {
@@ -127,7 +131,7 @@ public class ImportWorkflowChange extends AbstractChange {
     	Properties connectionProperties
     			= ((OracleConnection)((JdbcConnection)database.getConnection())
     					.getUnderlyingConnection()).getProperties();
-
+//    	Properties connectionProperties = new Properties();
     	// execute here - pull the connection information from the database object
     	List<String> args = new ArrayList<>();
     	args.add( "-Dworkflow.dir=${workflowPath}/baseline" );
@@ -156,7 +160,7 @@ public class ImportWorkflowChange extends AbstractChange {
         ValidationErrors validationErrors = new ValidationErrors();
         validationErrors.addAll(super.validate(database));
 
-        if ( fileName == null && directoryName  == null ) {
+        if ( fileName == null && directoryName == null ) {
         	validationErrors.addError("You must specify a fileName or a directoryName for the importWorkflow task.");
         } else if ( fileName != null && directoryName != null ) {
         	validationErrors.addError("You may only specify one of fileName and directoryName on the importWorkflow task.");
@@ -184,7 +188,6 @@ public class ImportWorkflowChange extends AbstractChange {
 				e.printStackTrace();
 			}
         }
-        // TODO : file or dir exists
 
         return validationErrors;
 	}
