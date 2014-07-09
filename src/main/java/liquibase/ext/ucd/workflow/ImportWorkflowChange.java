@@ -1,13 +1,14 @@
 package liquibase.ext.ucd.workflow;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,6 +23,7 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
 import liquibase.ext.ucd.JavaProcess;
+import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.util.StreamUtil;
 import oracle.jdbc.OracleConnection;
@@ -77,7 +79,7 @@ public class ImportWorkflowChange extends AbstractChange {
     protected InputStream getFileInputStream( String fileName ) {
         InputStream stream = null;
         try {
-            stream = StreamUtil.openStream(fileName, relativeToChangeLogFile, getChangeSet(), getResourceAccessor());
+            stream = StreamUtil.openStream(fileName, false, getChangeSet(), new FileSystemResourceAccessor( System.getProperty("user.dir") ));
             if (stream == null) {
                 throw new UnexpectedLiquibaseException(fileName + " could not be found");
             }
@@ -101,19 +103,35 @@ public class ImportWorkflowChange extends AbstractChange {
 
         String relativeTo = null;
         if (getRelativeToChangeLogFile()) {
-            relativeTo = getChangeSet().getChangeLog().getLogicalFilePath();
+            relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
         }
-//        System.out.println( "Resolving paths relative to: " + relativeTo );
-//        System.out.println( getResourceAccessor() );
-//        FileSystemResourceAccessor ra = new FileSystemResourceAccessor( System.getProperty("user.dir") );
-        Set<String> unsortedResources = getResourceAccessor().list(null, relativeTo + "/" + directoryName, true, false, false);
+        //System.out.println( "Resolving paths relative to: " + relativeTo );
+        FileSystemResourceAccessor ra = new FileSystemResourceAccessor( System.getProperty("user.dir") );
+        //System.out.println( ra );
+        File baseDir = new File( System.getProperty("user.dir") );
+        File relDir = null;
+        File workflowDir = null;
+        if ( relativeTo != null ) {
+        	relDir = new File( baseDir, relativeTo ).getParentFile();
+            workflowDir = new File( relDir, directoryName );
+        } else {
+            workflowDir = new File( directoryName );
+        }
+        //System.out.println( "Scanning: " + workflowDir.getAbsolutePath() );
+
+        File[] unsortedResources = workflowDir.listFiles( new FileFilter() {
+        	@Override
+        	public boolean accept(File pathname) {
+        		return pathname.isFile() && pathname.getName().endsWith(".xml");
+        	}
+        });
         SortedSet<String> resources = new TreeSet<String>();
         if (unsortedResources != null) {
-            for (String resourcePath : unsortedResources) {
-                resources.add(resourcePath);
+            for (File resourcePath : unsortedResources) {
+                resources.add(resourcePath.getAbsolutePath().replaceFirst(baseDir.getAbsolutePath()+"/", ""));
             }
         }
-
+        //System.out.println( "Returning: " + resources );
         return new ArrayList<>(resources);
     }
 
