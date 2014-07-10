@@ -5,10 +5,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -19,14 +20,15 @@ import liquibase.change.DatabaseChange;
 import liquibase.change.DatabaseChangeProperty;
 import liquibase.database.Database;
 import liquibase.database.core.OracleDatabase;
-import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
+import liquibase.executor.ExecutorService;
 import liquibase.ext.ucd.JavaProcess;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.util.StreamUtil;
-import oracle.jdbc.OracleConnection;
+
+import org.apache.commons.io.FileUtils;
 
 @DatabaseChange(name="importWorkflow", description = "Import Workflow", priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class ImportWorkflowChange extends AbstractChange {
@@ -45,7 +47,7 @@ public class ImportWorkflowChange extends AbstractChange {
     @Override
     public CheckSum generateCheckSum() {
     	if ( fileName != null ) {
-    		return generateCheckSumForSingleFile(fileName);
+    		return generateCheckSumForSingleFile(getRelativeFilePath(fileName));
     	} else {
     		CheckSum checksum = CheckSum.compute("");
     		try {
@@ -106,7 +108,6 @@ public class ImportWorkflowChange extends AbstractChange {
             relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
         }
         //System.out.println( "Resolving paths relative to: " + relativeTo );
-        FileSystemResourceAccessor ra = new FileSystemResourceAccessor( System.getProperty("user.dir") );
         //System.out.println( ra );
         File baseDir = new File( System.getProperty("user.dir") );
         File relDir = null;
@@ -135,6 +136,25 @@ public class ImportWorkflowChange extends AbstractChange {
         return new ArrayList<>(resources);
     }
 
+    protected String getRelativeFilePath( String fileName ) {
+        String relativeTo = null;
+        if (getRelativeToChangeLogFile()) {
+            relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
+        }
+        //System.out.println( "Resolving paths relative to: " + relativeTo );
+        //System.out.println( ra );
+        File baseDir = new File( System.getProperty("user.dir") );
+        File relDir = null;
+        File workflowFile = null;
+        if ( relativeTo != null ) {
+        	relDir = new File( baseDir, relativeTo ).getParentFile();
+            workflowFile = new File( relDir, fileName );
+        } else {
+            workflowFile = new File( fileName );
+        }
+        return workflowFile.getAbsolutePath().replaceFirst(baseDir.getAbsolutePath()+"/", "");
+    }
+
     @Override
 	public String getConfirmationMessage() {
     	if ( fileName != null ) {
@@ -144,27 +164,43 @@ public class ImportWorkflowChange extends AbstractChange {
     	}
     }
 
+    /**
+     * Stopping certain validation which was running the workflow at the wrong time
+     */
+    @Override
+    public boolean generateStatementsVolatile(Database database) {
+    	return true;
+    }
+
     @Override
 	public SqlStatement[] generateStatements(Database database) {
-    	Properties connectionProperties
-    			= ((OracleConnection)((JdbcConnection)database.getConnection())
-    					.getUnderlyingConnection()).getProperties();
-//    	Properties connectionProperties = new Properties();
-    	// execute here - pull the connection information from the database object
-    	List<String> args = new ArrayList<>();
-    	args.add( "-Dworkflow.dir=${workflowPath}/baseline" );
-    	args.add( "-Ddatasource.url=" + database.getConnection().getURL() );
-    	args.add( "-Ddatasource.username=" + database.getConnection().getConnectionUserName() );
-    	args.add( "-Ddatasource.password=" + connectionProperties.getProperty("password") );
-    	args.add( "-Drice.server.datasource.url=" + database.getConnection().getURL() );
-    	args.add( "-Drice.server.datasource.username=" + database.getConnection().getConnectionUserName() );
-    	args.add( "-Drice.server.datasource.password=" + connectionProperties.getProperty("password") );
-    	args.add( "-Dbuild.environment=wfimport" );
-    	args.add( "clean-all" );
-    	args.add( "import-workflow-xml" );
-
     	try {
-			JavaProcess.exec("org.apache.tools.ant.Main", null, null, args );
+    		//System.out.println( ExecutorService.getInstance().getExecutor(database) );
+    		if ( ExecutorService.getInstance().getExecutor(database).updatesDatabase() ) {
+		    	//new Throwable().printStackTrace();
+				Path tempDirectory = Files.createTempDirectory("liquibase-workflow");
+				System.out.println( "Using Temp Directory for Workflow: " + tempDirectory );
+				if ( directoryName != null ) {
+					FileUtils.copyDirectory(new File( getRelativeFilePath(directoryName) ), tempDirectory.toFile().getAbsoluteFile() );
+				} else {
+					FileUtils.copyFileToDirectory( new File( getRelativeFilePath(fileName) ), tempDirectory.toFile().getAbsoluteFile() );
+				}
+
+		    	// execute here - pull the connection information from the database object
+		    	List<String> args = new ArrayList<>();
+		    	args.add( "-Dworkflow.dir=" + tempDirectory );
+		    	args.add( "-Ddatasource.url=" + database.getConnection().getURL() );
+		    	args.add( "-Ddatasource.username=" + database.getConnection().getConnectionUserName() );
+		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("DBPASSWORD" ) );
+		    	args.add( "-Drice.server.datasource.url=" + database.getConnection().getURL() );
+		    	args.add( "-Drice.server.datasource.username=" + database.getConnection().getConnectionUserName() );
+		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("DBPASSWORD") );
+		    	args.add( "-Dbuild.environment=wfimport" );
+		    	args.add( "clean-all" );
+		    	args.add( "import-workflow-xml" );
+		    	//System.out.println( System.getProperties() );
+				JavaProcess.exec("org.apache.tools.ant.Main", "../../uc-kfs-uc", getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(), null, args );
+    		}
 		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
