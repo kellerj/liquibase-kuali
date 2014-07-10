@@ -26,18 +26,16 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.ucd.JavaProcess;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.RawSqlStatement;
 import liquibase.util.StreamUtil;
 
 import org.apache.commons.io.FileUtils;
 
-@DatabaseChange(name="importWorkflow", description = "Import Workflow", priority = ChangeMetaData.PRIORITY_DEFAULT)
+@DatabaseChange(name="importWorkflow", description = "Import Workflow XML", priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class ImportWorkflowChange extends AbstractChange {
 
     private String fileName;
     private String directoryName;
-    private Boolean relativeToChangeLogFile = Boolean.TRUE;
-
-
 
     @Override
     public boolean supports(Database database) {
@@ -49,19 +47,17 @@ public class ImportWorkflowChange extends AbstractChange {
     	if ( fileName != null ) {
     		return generateCheckSumForSingleFile(getRelativeFilePath(fileName));
     	} else {
-    		CheckSum checksum = CheckSum.compute("");
     		try {
+    			StringBuilder checkSumString = new StringBuilder();
 				for ( String fileName : getDirectoryFileNames() ) {
-					CheckSum.compute(checksum.toString() + generateCheckSumForSingleFile(fileName).toString());
+					checkSumString.append(generateCheckSumForSingleFile(fileName).toString());
 				}
+				// now, checksum the filename/checksum combos
+				return CheckSum.compute(checkSumString.toString());
 			} catch (IOException ex) {
 				throw new UnexpectedLiquibaseException( "Error obtaining workflow XML files from " + directoryName, ex );
 			}
     	}
-    	// TODO : get file or files
-    	// build checksums from names and contents (name only - no path)
-    	// checksum the concat of the checksums
-    	return super.generateCheckSum();
     }
 
     protected CheckSum generateCheckSumForSingleFile( String fileName ) {
@@ -103,22 +99,9 @@ public class ImportWorkflowChange extends AbstractChange {
             directoryName = directoryName + '/';
         }
 
-        String relativeTo = null;
-        if (getRelativeToChangeLogFile()) {
-            relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
-        }
-        //System.out.println( "Resolving paths relative to: " + relativeTo );
-        //System.out.println( ra );
         File baseDir = new File( System.getProperty("user.dir") );
-        File relDir = null;
-        File workflowDir = null;
-        if ( relativeTo != null ) {
-        	relDir = new File( baseDir, relativeTo ).getParentFile();
-            workflowDir = new File( relDir, directoryName );
-        } else {
-            workflowDir = new File( directoryName );
-        }
-        //System.out.println( "Scanning: " + workflowDir.getAbsolutePath() );
+        File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
+        File workflowDir = new File( changeLogDir, directoryName );
 
         File[] unsortedResources = workflowDir.listFiles( new FileFilter() {
         	@Override
@@ -137,21 +120,10 @@ public class ImportWorkflowChange extends AbstractChange {
     }
 
     protected String getRelativeFilePath( String fileName ) {
-        String relativeTo = null;
-        if (getRelativeToChangeLogFile()) {
-            relativeTo = getChangeSet().getChangeLog().getPhysicalFilePath();
-        }
-        //System.out.println( "Resolving paths relative to: " + relativeTo );
-        //System.out.println( ra );
         File baseDir = new File( System.getProperty("user.dir") );
-        File relDir = null;
-        File workflowFile = null;
-        if ( relativeTo != null ) {
-        	relDir = new File( baseDir, relativeTo ).getParentFile();
-            workflowFile = new File( relDir, fileName );
-        } else {
-            workflowFile = new File( fileName );
-        }
+        File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
+        File workflowFile = new File( changeLogDir, fileName );
+        
         return workflowFile.getAbsolutePath().replaceFirst(baseDir.getAbsolutePath()+"/", "");
     }
 
@@ -174,10 +146,8 @@ public class ImportWorkflowChange extends AbstractChange {
 
     @Override
 	public SqlStatement[] generateStatements(Database database) {
-    	try {
-    		//System.out.println( ExecutorService.getInstance().getExecutor(database) );
-    		if ( ExecutorService.getInstance().getExecutor(database).updatesDatabase() ) {
-		    	//new Throwable().printStackTrace();
+		if ( ExecutorService.getInstance().getExecutor(database).updatesDatabase() ) {
+			try {
 				Path tempDirectory = Files.createTempDirectory("liquibase-workflow");
 				System.out.println( "Using Temp Directory for Workflow: " + tempDirectory );
 				if ( directoryName != null ) {
@@ -191,22 +161,45 @@ public class ImportWorkflowChange extends AbstractChange {
 		    	args.add( "-Dworkflow.dir=" + tempDirectory );
 		    	args.add( "-Ddatasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Ddatasource.username=" + database.getConnection().getConnectionUserName() );
-		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("DBPASSWORD" ) );
+		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password" ) );
 		    	args.add( "-Drice.server.datasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Drice.server.datasource.username=" + database.getConnection().getConnectionUserName() );
-		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("DBPASSWORD") );
+		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password") );
 		    	args.add( "-Dbuild.environment=wfimport" );
-		    	args.add( "clean-all" );
+		    	// just to speed things up if we have multiple workflow to run
+		    	Object value = getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.clean-already-run");
+		    	if ( value == null ) {
+		    		args.add( "clean-all" );
+		    		getChangeSet().getChangeLog().getChangeLogParameters().set("import.workflow.clean-already-run", Boolean.TRUE);
+    			}
 		    	args.add( "import-workflow-xml" );
-		    	//System.out.println( System.getProperties() );
-				JavaProcess.exec("org.apache.tools.ant.Main", "../../uc-kfs-uc", getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(), null, args );
-    		}
-		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-    	return new SqlStatement[0];
+				JavaProcess.exec("org.apache.tools.ant.Main", 
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location").toString(), 
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(), 
+						null, args );
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+			}
+
+	    	return new SqlStatement[0];
+		} else {
+			StringBuilder sb = new StringBuilder();
+			if ( directoryName != null ) {
+				sb.append( "-- Will import workflow XML files in the ").append( getRelativeFilePath(directoryName) ).append( " directory:\n" );
+				try {
+					for ( String fileName : getDirectoryFileNames() ) {
+						sb.append( "-- ---> " ).append( fileName ).append( "\n" );
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				sb.append( "Will import workflow XML file: " ).append( getRelativeFilePath(fileName) ).append( "\n" );
+			}
+			
+			return new SqlStatement[] { new RawSqlStatement( sb.toString() ) };
+		}
     }
 
 	@Override
@@ -265,16 +258,5 @@ public class ImportWorkflowChange extends AbstractChange {
 
 	public void setDirectoryName(String directoryName) {
 		this.directoryName = directoryName;
-	}
-
-
-    @DatabaseChangeProperty(description = "File or Direcectory Relative to ChangeLog file?", exampleValue = "true")
-	public Boolean getRelativeToChangeLogFile() {
-		return relativeToChangeLogFile;
-	}
-
-
-	public void setRelativeToChangeLogFile(Boolean relativeToChangeLogFile) {
-		this.relativeToChangeLogFile = relativeToChangeLogFile;
 	}
 }

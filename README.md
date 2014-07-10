@@ -40,13 +40,15 @@ Implemented Extensions
 
 You can now import workflow XML via this tool.  The syntax is as follows:
 
-	<ucd:importWorkflow directoryName="workflow/KFS-18130" relativeToChangeLogFile="true" />
+	<ucd:importWorkflow directoryName="workflow/KFS-18130" />
 	
 or
 
-	<ucd:importWorkflow fileName="workflow/KFS-18130.xml" relativeToChangeLogFile="true" />
+	<ucd:importWorkflow fileName="workflow/KFS-18130.xml" />
 
 These would always be placed in the `rice/rice` scripts, since that connection information is what is needed to ingest workflow XML.
+
+The given paths are relative to the directory of the changelog file.  So, if the changelog file is in `rice/rice/KFS-18130.xml`, the first example above would point to `rice/rice/workflow/KFS-18130/`.
 
 Planned Extensions
 ------------------

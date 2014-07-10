@@ -7,7 +7,6 @@
 
     <xsd:element name="importWorkflow">
         <xsd:complexType>
-	        <xsd:attribute name="relativeToChangeLogFile" type="xsd:boolean" default="true"/>
 	        <xsd:attribute name="fileName" type="xsd:string"/>
 	        <xsd:attribute name="directoryName" type="xsd:string"/>
         </xsd:complexType>
