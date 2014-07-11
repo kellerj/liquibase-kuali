@@ -123,7 +123,7 @@ public class ImportWorkflowChange extends AbstractChange {
         File baseDir = new File( System.getProperty("user.dir") );
         File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
         File workflowFile = new File( changeLogDir, fileName );
-        
+
         return workflowFile.getAbsolutePath().replaceFirst(baseDir.getAbsolutePath()+"/", "");
     }
 
@@ -165,6 +165,7 @@ public class ImportWorkflowChange extends AbstractChange {
 		    	args.add( "-Drice.server.datasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Drice.server.datasource.username=" + database.getConnection().getConnectionUserName() );
 		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password") );
+		    	args.add( "-Djava.awt.headless=true" );
 		    	args.add( "-Dbuild.environment=wfimport" );
 		    	// just to speed things up if we have multiple workflow to run
 		    	Object value = getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.clean-already-run");
@@ -174,9 +175,9 @@ public class ImportWorkflowChange extends AbstractChange {
     			}
 		    	args.add( "import-workflow-xml" );
 
-				JavaProcess.exec("org.apache.tools.ant.Main", 
-						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location").toString(), 
-						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(), 
+				JavaProcess.exec("org.apache.tools.ant.Main",
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location").toString(),
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(),
 						null, args );
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
@@ -197,7 +198,7 @@ public class ImportWorkflowChange extends AbstractChange {
 			} else {
 				sb.append( "Will import workflow XML file: " ).append( getRelativeFilePath(fileName) ).append( "\n" );
 			}
-			
+
 			return new SqlStatement[] { new RawSqlStatement( sb.toString() ) };
 		}
     }
