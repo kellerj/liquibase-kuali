@@ -102,7 +102,8 @@ public class ImportWorkflowChange extends AbstractChange {
         File baseDir = new File( System.getProperty("user.dir") );
         File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
         File workflowDir = new File( changeLogDir, directoryName );
-
+        String baseDirUnix = baseDir.getAbsolutePath().replace('\\','/');
+        
         File[] unsortedResources = workflowDir.listFiles( new FileFilter() {
         	@Override
         	public boolean accept(File pathname) {
@@ -112,7 +113,8 @@ public class ImportWorkflowChange extends AbstractChange {
         SortedSet<String> resources = new TreeSet<String>();
         if (unsortedResources != null) {
             for (File resourcePath : unsortedResources) {
-                resources.add(resourcePath.getAbsolutePath().replaceFirst(baseDir.getAbsolutePath()+"/", ""));
+            	String unixFilePath = resourcePath.getAbsolutePath().replace('\\','/'); 
+                resources.add(unixFilePath.replaceFirst(baseDirUnix+"/", ""));
             }
         }
         //System.out.println( "Returning: " + resources );
@@ -158,7 +160,7 @@ public class ImportWorkflowChange extends AbstractChange {
 
 		    	// execute here - pull the connection information from the database object
 		    	List<String> args = new ArrayList<>();
-		    	args.add( "-Dworkflow.dir=" + tempDirectory );
+		    	args.add( "-Dworkflow.dir=" + tempDirectory.toString().replace('\\', '/') );
 		    	args.add( "-Ddatasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Ddatasource.username=" + database.getConnection().getConnectionUserName() );
 		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password" ) );
