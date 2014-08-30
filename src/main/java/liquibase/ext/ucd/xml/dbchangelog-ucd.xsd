@@ -12,6 +12,39 @@
         </xsd:complexType>
     </xsd:element>
 
+	<xsd:simpleType name="riceIdentifierString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="riceNameString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="80" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="riceDescriptionString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:attributeGroup name="roleIdentifier">
+        <xsd:attribute name="roleNamespaceCode" type="riceIdentifierString" use="required"/>
+        <xsd:attribute name="roleName" type="riceNameString" use="required"/>
+    </xsd:attributeGroup>
+
+    <xsd:element name="createRole">
+        <xsd:complexType>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+	        <xsd:attribute name="roleTypeNamespace" type="riceIdentifierString" default="KUALI"/>
+	        <xsd:attribute name="roleTypeName" type="riceNameString" default="Default"/>
+	        <xsd:attribute name="roleDescription" type="riceDescriptionString" />
+	        <xsd:attribute name="roleId" type="riceIdentifierString" />
+        </xsd:complexType>
+    </xsd:element>
+
 <!-- 
     <xsd:attributeGroup name="constraintState">
         <xsd:attribute name="disable" type="xsd:boolean"/>
