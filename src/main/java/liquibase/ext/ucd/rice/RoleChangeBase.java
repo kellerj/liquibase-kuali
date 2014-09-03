@@ -1,9 +1,8 @@
 package liquibase.ext.ucd.rice;
 
-import liquibase.change.AbstractSQLChange;
 import liquibase.change.DatabaseChangeProperty;
 
-public abstract class RoleChangeBase extends AbstractSQLChange {
+public abstract class RoleChangeBase extends KimChangeBase {
 
 	protected String roleNamespaceCode;
 	protected String roleName;

@@ -7,6 +7,9 @@ import liquibase.change.DatabaseChangeProperty;
 import liquibase.change.core.DeleteDataChange;
 import liquibase.database.Database;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.RawSqlStatement;
+
+import org.apache.commons.lang.StringUtils;
 
 @DatabaseChange(name="createRole", description = "Creates a KIM role of the given type.", priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class CreateRoleChange extends RoleChangeBase {
@@ -21,11 +24,43 @@ public class CreateRoleChange extends RoleChangeBase {
 		return "Created Role " + roleNamespaceCode + " / " + roleName;
 	}
 
+	protected String makeQuoteSafe( String value ) {
+		return StringUtils.replace(value, "'", "''");
+	}
+
+	protected String getKimTypeIdFunctionSql() {
+		return  "    FUNCTION get_kim_type_id( TypeNamespace IN VARCHAR2, TypeName IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
+				"        id VARCHAR2(40);\n" +
+				"    BEGIN\n" +
+				"        SELECT kim_typ_id\n" +
+				"            INTO id\n" +
+				"            FROM KRIM_TYP_T\n" +
+				"            WHERE nmspc_cd = TypeNamespace AND nm = TypeName;\n" +
+				"        RETURN id;\n" +
+				"    END;\n";
+	}
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) {
-		// TODO Auto-generated method stub
-		return super.generateStatements(database);
+		String sql = "DECLARE \n"
+				+ getKimTypeIdFunctionSql()
+				+ "   type_id VARCHAR2(40);\n" +
+				"   role_id VARCHAR2(40);\n" +
+				"   next_id NUMBER;\n" +
+				"BEGIN\n" +
+				"    type_id := get_kim_type_id( '"+makeQuoteSafe(roleTypeNamespace)+"', '"+makeQuoteSafe(roleTypeName)+"' );\n" +
+				"    IF RoleId IS NULL THEN\n" +
+				"        SELECT KRIM_ROLE_ID_S.NEXTVAL INTO next_id FROM dual;\n" +
+				"        role_id := 'KFS'||next_id;\n" +
+				"    ELSE\n" +
+				"        role_id := '"+makeQuoteSafe(roleId)+"';\n" +
+				"    END IF;\n" +
+				"    INSERT INTO KRIM_ROLE_T\n" +
+				"        (ROLE_ID, OBJ_ID, ROLE_NM, NMSPC_CD, DESC_TXT, KIM_TYP_ID, ACTV_IND, LAST_UPDT_DT) \n" +
+				"        VALUES(role_id, SYS_GUID(), "+makeQuoteSafe(roleName)+", "+makeQuoteSafe(roleNamespaceCode)+", "+makeQuoteSafe(roleDescription)+", type_id, 'Y', SYSDATE);\n" +
+				"END;";
+		RawSqlStatement statement = new RawSqlStatement(sql,"/");
+		return new SqlStatement[] { statement };
 	}
 
 	@Override
@@ -43,39 +78,32 @@ public class CreateRoleChange extends RoleChangeBase {
 		return roleTypeNamespace;
 	}
 
-
 	public void setRoleTypeNamespace(String roleTypeNamespace) {
 		this.roleTypeNamespace = roleTypeNamespace;
 	}
-
 
 	@DatabaseChangeProperty
 	public String getRoleTypeName() {
 		return roleTypeName;
 	}
 
-
 	public void setRoleTypeName(String roleTypeName) {
 		this.roleTypeName = roleTypeName;
 	}
-
 
 	@DatabaseChangeProperty
 	public String getRoleDescription() {
 		return roleDescription;
 	}
 
-
 	public void setRoleDescription(String roleDescription) {
 		this.roleDescription = roleDescription;
 	}
-
 
 	@DatabaseChangeProperty
 	public String getRoleId() {
 		return roleId;
 	}
-
 
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
