@@ -37,6 +37,7 @@
 
     <xsd:element name="createRole">
         <xsd:complexType>
+        	<xsd:attribute name="applicationId" type="riceIdentifierString" default="KFS"/>
         	<xsd:attributeGroup ref="roleIdentifier"/>
 	        <xsd:attribute name="roleTypeNamespace" type="riceIdentifierString" default="KUALI"/>
 	        <xsd:attribute name="roleTypeName" type="riceNameString" default="Default"/>

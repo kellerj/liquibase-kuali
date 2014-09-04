@@ -1,21 +1,18 @@
 package liquibase.ext.ucd.rice;
 
-import liquibase.change.AbstractSQLChange;
-import liquibase.database.Database;
-import liquibase.statement.SqlStatement;
+import liquibase.change.AbstractChange;
+import liquibase.change.DatabaseChangeProperty;
 
-public abstract class KimChangeBase extends AbstractSQLChange {
+public abstract class KimChangeBase extends AbstractChange {
 
-	@Override
-	public String getConfirmationMessage() {
-		// TODO Auto-generated method stub
-		return null;
+	protected String applicationId;
+
+	@DatabaseChangeProperty(description="Application which owns the new KIM data", exampleValue="KFS")
+	public String getApplicationId() {
+		return applicationId;
 	}
 
-	@Override
-	public SqlStatement[] generateStatements(Database database) {
-		// TODO Auto-generated method stub
-		return null;
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
 	}
-
 }

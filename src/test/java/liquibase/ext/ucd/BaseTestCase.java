@@ -5,49 +5,77 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.util.Properties;
 
-import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.lockservice.LockServiceFactory;
-import liquibase.resource.ClassLoaderResourceAccessor;
+
+import org.junit.After;
+import org.junit.Before;
 
 /*
  * Class used by tests to set up connection and clean database.
  */
-public class BaseTestCase {
+public abstract class BaseTestCase {
 
     private static String url;
     private static Driver driver;
     private static Properties info;
-    protected static Connection connection;
-    protected static JdbcConnection jdbcConnection;
-    protected static Liquibase liquiBase;
-    protected static String changeLogFile;
+    protected Connection connection;
+    protected JdbcConnection jdbcConnection;
+    //protected static Liquibase liquiBase;
 
-    public static void connectToDB() throws Exception {
-        if (connection == null) {
-            info = new Properties();
-            info.load(new FileInputStream("src/test/resources/tests.properties"));
+    protected String getBaseChangeLogPath() {
+    	return "liquibase/ext/ucd/";
+    }
 
-            url = info.getProperty("url");
-            driver = (Driver) Class.forName(DatabaseFactory.getInstance().findDefaultDriver(url), true,
-                    Thread.currentThread().getContextClassLoader()).newInstance();
+    protected abstract String getChangeLogFileName();
 
-            connection = driver.connect(url, info);
+    protected String getLiquibaseConfigFile() {
+		return "src/test/resources/liquibase.properties";
+    }
 
-            if (connection == null) {
-                throw new DatabaseException("Connection could not be created to " + url + " with driver "
-                        + driver.getClass().getName() + ".  Possibly the wrong driver for the given database URL");
-            }
+    protected String getChangeLogFile() {
+    	return getBaseChangeLogPath()+getChangeLogFileName();
+    }
 
-            jdbcConnection = new JdbcConnection(connection);
+    private void extractConnectionInformation() throws Exception {
+        info = new Properties();
+        info.load(new FileInputStream(getLiquibaseConfigFile()));
+
+        url = info.getProperty("url");
+        driver = (Driver) Class.forName(DatabaseFactory.getInstance().findDefaultDriver(url), true,
+                Thread.currentThread().getContextClassLoader()).newInstance();
+    }
+
+    @Before
+    public void connectToDB() throws Exception {
+        if (info == null) {
+        	extractConnectionInformation();
+        }
+        if ( jdbcConnection == null ) {
+	        connection = driver.connect(url, info);
+
+	        if (connection == null) {
+	            throw new DatabaseException("Connection could not be created to " + url + " with driver "
+	                    + driver.getClass().getName() + ".  Possibly the wrong driver for the given database URL");
+	        }
+
+	        jdbcConnection = new JdbcConnection(connection);
         }
     }
 
-    public static void cleanDB() throws Exception {
-        liquiBase = new Liquibase(changeLogFile, new ClassLoaderResourceAccessor(), jdbcConnection);
-        liquiBase.dropAll();
-        LockServiceFactory.reset();
+    @After
+    public void tearDown() throws Exception {
+    	if ( jdbcConnection != null ) {
+    		jdbcConnection.close();
+	    	connection = null;
+	    	jdbcConnection = null;
+    	}
     }
+
+//    public static void cleanDB() throws Exception {
+//
+//        liquiBase.dropAll();
+//        LockServiceFactory.reset();
+//    }
 }

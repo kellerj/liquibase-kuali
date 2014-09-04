@@ -42,22 +42,23 @@ public class CreateRoleChange extends RoleChangeBase {
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) {
-		String sql = "DECLARE \n"
-				+ getKimTypeIdFunctionSql()
-				+ "   type_id VARCHAR2(40);\n" +
+		String sql = "DECLARE \n" +
+				"   type_id VARCHAR2(40);\n" +
 				"   role_id VARCHAR2(40);\n" +
 				"   next_id NUMBER;\n" +
+				getKimTypeIdFunctionSql() +
 				"BEGIN\n" +
-				"    type_id := get_kim_type_id( '"+makeQuoteSafe(roleTypeNamespace)+"', '"+makeQuoteSafe(roleTypeName)+"' );\n" +
-				"    IF RoleId IS NULL THEN\n" +
-				"        SELECT KRIM_ROLE_ID_S.NEXTVAL INTO next_id FROM dual;\n" +
-				"        role_id := 'KFS'||next_id;\n" +
-				"    ELSE\n" +
-				"        role_id := '"+makeQuoteSafe(roleId)+"';\n" +
-				"    END IF;\n" +
+				"    type_id := get_kim_type_id( '"+makeQuoteSafe(roleTypeNamespace)+"', '"+makeQuoteSafe(roleTypeName)+"' );\n";
+		if ( StringUtils.isNotBlank(roleId) ) {
+			sql += "        role_id := '"+makeQuoteSafe(roleId)+"';\n";
+		} else {
+			sql += 	"        SELECT KRIM_ROLE_ID_S.NEXTVAL INTO next_id FROM dual;\n" +
+					"        role_id := '"+makeQuoteSafe(applicationId)+"'||next_id;\n";
+		}
+		sql +=
 				"    INSERT INTO KRIM_ROLE_T\n" +
 				"        (ROLE_ID, OBJ_ID, ROLE_NM, NMSPC_CD, DESC_TXT, KIM_TYP_ID, ACTV_IND, LAST_UPDT_DT) \n" +
-				"        VALUES(role_id, SYS_GUID(), "+makeQuoteSafe(roleName)+", "+makeQuoteSafe(roleNamespaceCode)+", "+makeQuoteSafe(roleDescription)+", type_id, 'Y', SYSDATE);\n" +
+				"        VALUES(role_id, SYS_GUID(), '"+makeQuoteSafe(roleName)+"', '"+makeQuoteSafe(roleNamespaceCode)+"', '"+makeQuoteSafe(roleDescription)+"', type_id, 'Y', SYSDATE);\n" +
 				"END;";
 		RawSqlStatement statement = new RawSqlStatement(sql,"/");
 		return new SqlStatement[] { statement };
