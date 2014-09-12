@@ -24,10 +24,6 @@ public class CreateRoleChange extends RoleChangeBase {
 		return "Created Role " + roleNamespaceCode + " / " + roleName;
 	}
 
-	protected String makeQuoteSafe( String value ) {
-		return StringUtils.replace(value, "'", "''");
-	}
-
 	protected String getKimTypeIdFunctionSql() {
 		return  "    FUNCTION get_kim_type_id( TypeNamespace IN VARCHAR2, TypeName IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
 				"        id VARCHAR2(40);\n" +
