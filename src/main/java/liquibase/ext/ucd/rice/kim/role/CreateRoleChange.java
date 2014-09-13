@@ -1,4 +1,4 @@
-package liquibase.ext.ucd.rice;
+package liquibase.ext.ucd.rice.kim.role;
 
 import liquibase.change.Change;
 import liquibase.change.ChangeMetaData;

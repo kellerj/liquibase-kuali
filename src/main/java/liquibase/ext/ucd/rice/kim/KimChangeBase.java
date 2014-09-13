@@ -1,4 +1,4 @@
-package liquibase.ext.ucd.rice;
+package liquibase.ext.ucd.rice.kim;
 
 import liquibase.change.AbstractChange;
 import liquibase.change.DatabaseChangeProperty;

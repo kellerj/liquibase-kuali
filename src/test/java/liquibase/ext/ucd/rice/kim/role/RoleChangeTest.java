@@ -1,4 +1,4 @@
-package liquibase.ext.ucd.rice;
+package liquibase.ext.ucd.rice.kim.role;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
+import liquibase.ext.ucd.rice.RiceTestBase;
 import liquibase.parser.ChangeLogParserFactory;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
@@ -21,6 +22,11 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RoleChangeTest extends RiceTestBase {
+
+	@Override
+	protected String getBaseChangeLogPath() {
+		return super.getBaseChangeLogPath() + "kim/role/";
+	}
 
 	@Override
 	protected String getChangeLogFileName() {

@@ -1,6 +1,7 @@
-package liquibase.ext.ucd.rice;
+package liquibase.ext.ucd.rice.kim.role;
 
 import liquibase.change.DatabaseChangeProperty;
+import liquibase.ext.ucd.rice.kim.KimChangeBase;
 
 public abstract class RoleChangeBase extends KimChangeBase {
 
