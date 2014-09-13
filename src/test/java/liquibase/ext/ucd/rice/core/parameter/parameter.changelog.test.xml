@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ucd="http://www.liquibase.org/xml/ns/dbchangelog-ucd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog src/main/resources/liquibase/ext/ucd/xml/dbchangelog-3.2.xsd 
+        http://www.liquibase.org/xml/ns/dbchangelog-ucd src/main/resources/liquibase/ext/ucd/xml/dbchangelog-ucd.xsd">
+<!-- 
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog src/main/resources/liquibase/ext/ucd/xml/dbchangelog-3.2.xsd 
+        http://www.liquibase.org/xml/ns/dbchangelog-ucd src/main/resources/liquibase/ext/ucd/xml/dbchangelog-ucd.xsd">
+
+
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../../../../../../../../main/resources/liquibase/ext/ucd/xml/dbchangelog-3.2.xsd 
+        http://www.liquibase.org/xml/ns/dbchangelog-ucd ../../../../../../../../main/resources/liquibase/ext/ucd/xml/dbchangelog-ucd.xsd ">
+ -->
+    <changeSet author="kellerj" id="CreateParameterUsingDefaults">
+		<ucd:createParameter applicationId="KFS" namespaceCode="KFS-COA" component="Account" name="LB_TEST_1" value="A_VALUE" />        
+    </changeSet>
+
+</databaseChangeLog>
