@@ -10,7 +10,7 @@ To use these extensions, you must declare the `kuali` namespace in the XML Heade
 
 This requires adding:
 
-	xmlns:ucd="http://www.liquibase.org/xml/ns/dbchangelog-kuali"
+	xmlns:kuali="http://www.liquibase.org/xml/ns/dbchangelog-kuali"
 
 to the namespace definitions and:
 
