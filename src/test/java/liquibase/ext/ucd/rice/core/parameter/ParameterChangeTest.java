@@ -1,5 +1,10 @@
 package liquibase.ext.ucd.rice.core.parameter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import liquibase.Contexts;
@@ -16,6 +21,7 @@ import liquibase.resource.ResourceAccessor;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -46,18 +52,21 @@ public class ParameterChangeTest extends RiceTestBase {
         changeLog.validate(database);
 
         List<ChangeSet> changeSets = changeLog.getChangeSets();
-//
-//        List<String> expectedQuery = new ArrayList<String>();
-//
-//        // expectedQuery.add("ALTER TABLE addcheck ADD CONSTRAINT tom_check CHECK(id between 0 and 5 ) DEFERRABLE INITIALLY DEFERRED DISABLE");
-//        // expectedQuery.add("ALTER TABLE addcheck ADD CONSTRAINT tom_check1 CHECK(id between 10 and 15) ENABLE");
-//        expectedQuery.add("ALTER TABLE LIQUIBASE.addcheck ADD CHECK(id between 0 and 5 ) DEFERRABLE INITIALLY DEFERRED DISABLE");
-//
+
+        assertNotNull( "changesets should not have been null", changeSets);
+        assertTrue( "should have been at least 1 changeset", changeSets.size() > 0 );
         ChangeSet changeSet = changeSets.get(0);
+
+        assertNotNull( "changeset should not have been null", changeSet);
+        assertEquals( "should have been 1 change in changeset 1", 1, changeSet.getChanges().size() );
         Change change = changeSet.getChanges().get(0);
+
+        List<String> expectedQuery = new ArrayList<String>();
+        expectedQuery.add("INSERT INTO RICE.KRCR_PARM_T (APPL_ID, NMSPC_CD, CMPNT_CD, PARM_NM, VAL, PARM_TYP_CD, EVAL_OPRTR_CD) VALUES ('KFS', 'KFS-COA', 'Account', 'LB_TEST_1', 'A_VALUE', 'CONFG', 'A')" );
         Sql[] sql = SqlGeneratorFactory.getInstance().generateSql(change.generateStatements(database)[0], database);
-        System.out.println( sql[0].toSql() );
-        //assertEquals(expectedQuery.get(0), sql[0].toSql());
+        //System.out.println( sql[0].toSql() );
+
+        Assert.assertEquals( "expected query incorrect", expectedQuery.get(0), sql[0].toSql());
     }
 
   @Test
