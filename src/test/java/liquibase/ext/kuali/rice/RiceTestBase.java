@@ -11,6 +11,6 @@ public abstract class RiceTestBase extends BaseTestCase {
 
 	@Override
 	protected String getLiquibaseConfigFile() {
-		return "src/test/resources/" + getBaseChangeLogPath() + "liquibase.properties";
+		return "src/test/resources/" + super.getBaseChangeLogPath() + "rice/liquibase.properties";
 	}
 }

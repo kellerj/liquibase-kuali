@@ -57,12 +57,26 @@
     </xsd:element>
 
 
+    <xsd:element name="createResponsibility">
+        <xsd:complexType>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+	        <xsd:attribute name="description" type="riceDescriptionString" />
+	        <xsd:attribute name="responsibilityId" type="riceIdentifierString" use="optional"/> 
+	        <xsd:attribute name="documentType" type="riceNameString" use="required" />
+	        <xsd:attribute name="routeNode" type="riceNameString" use="required" />
+	        <xsd:attribute name="routingRequired" type="xsd:boolean" />
+	        <xsd:attribute name="actionDetailsAtRowMemberLevel" type="xsd:boolean" />
+        </xsd:complexType>
+    </xsd:element>
 
-
-
-
-
-
+    <xsd:element name="deleteResponsibility">
+        <xsd:complexType>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
 
 	<xsd:simpleType name="componentType">
 		<xsd:restriction base="xsd:string">
