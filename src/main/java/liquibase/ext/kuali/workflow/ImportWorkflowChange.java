@@ -103,7 +103,7 @@ public class ImportWorkflowChange extends AbstractChange {
         File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
         File workflowDir = new File( changeLogDir, directoryName );
         String baseDirUnix = baseDir.getAbsolutePath().replace('\\','/');
-        
+
         File[] unsortedResources = workflowDir.listFiles( new FileFilter() {
         	@Override
         	public boolean accept(File pathname) {
@@ -113,7 +113,7 @@ public class ImportWorkflowChange extends AbstractChange {
         SortedSet<String> resources = new TreeSet<String>();
         if (unsortedResources != null) {
             for (File resourcePath : unsortedResources) {
-            	String unixFilePath = resourcePath.getAbsolutePath().replace('\\','/'); 
+            	String unixFilePath = resourcePath.getAbsolutePath().replace('\\','/');
                 resources.add(unixFilePath.replaceFirst(baseDirUnix+"/", ""));
             }
         }
@@ -217,7 +217,7 @@ public class ImportWorkflowChange extends AbstractChange {
         } else if ( fileName != null ) {
             InputStream stream = null;
             try {
-                stream = getFileInputStream(fileName);
+                stream = getFileInputStream( getRelativeFilePath(fileName) );
             } catch ( UnexpectedLiquibaseException ex ) {
             	validationErrors.addError("Unable to access Workflow XML File: " + fileName + " : " + ex.getMessage() );
             	ex.printStackTrace();

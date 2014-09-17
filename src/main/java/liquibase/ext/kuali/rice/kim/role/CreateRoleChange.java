@@ -24,18 +24,6 @@ public class CreateRoleChange extends RoleChangeBase {
 		return "Created Role " + roleNamespaceCode + " / " + roleName;
 	}
 
-	protected String getKimTypeIdFunctionSql() {
-		return  "    FUNCTION get_kim_type_id( TypeNamespace IN VARCHAR2, TypeName IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
-				"        id VARCHAR2(40);\n" +
-				"    BEGIN\n" +
-				"        SELECT kim_typ_id\n" +
-				"            INTO id\n" +
-				"            FROM KRIM_TYP_T\n" +
-				"            WHERE nmspc_cd = TypeNamespace AND nm = TypeName;\n" +
-				"        RETURN id;\n" +
-				"    END;\n";
-	}
-
 	@Override
 	public SqlStatement[] generateStatements(Database database) {
 		String sql = "DECLARE \n" +
