@@ -35,4 +35,15 @@ public class KimSqlGeneratorHelper {
 				"    END;\n";
 	}
 
+	public static String getRoleIdFunctionSql() {
+		return "    FUNCTION get_role_id( Namespace IN VARCHAR2, Name IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
+				"        id VARCHAR2(40);\n" +
+				"    BEGIN\n" +
+				"        SELECT role_id\n" +
+				"            INTO id\n" +
+				"            FROM KRIM_ROLE_T\n" +
+				"            WHERE nmspc_cd = Namespace AND role_nm = Name;\n" +
+				"        RETURN id;\n" +
+				"    END;\n";
+	}
 }

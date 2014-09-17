@@ -66,8 +66,8 @@
 	        <xsd:attribute name="responsibilityId" type="riceIdentifierString" use="optional"/> 
 	        <xsd:attribute name="documentType" type="riceNameString" use="required" />
 	        <xsd:attribute name="routeNode" type="riceNameString" use="required" />
-	        <xsd:attribute name="routingRequired" type="xsd:boolean" />
-	        <xsd:attribute name="actionDetailsAtRowMemberLevel" type="xsd:boolean" />
+	        <xsd:attribute name="routingRequired" type="xsd:boolean" default="false" />
+	        <xsd:attribute name="actionDetailsAtRowMemberLevel" type="xsd:boolean" default="false" />
         </xsd:complexType>
     </xsd:element>
 
@@ -75,6 +75,25 @@
         <xsd:complexType>
 	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
 	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="WorkflowActionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="APPROVE" />
+            <xsd:enumeration value="ACKNOWLEDGE" />
+            <xsd:enumeration value="FYI" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="assignResponsibility">
+        <xsd:complexType>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS" />
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+	        <xsd:attribute name="documentType" type="riceNameString" use="required" />
+	        <xsd:attribute name="routeNode" type="riceNameString" use="required" />
+	        <xsd:attribute name="actionType" type="WorkflowActionType" use="optional" default="APPROVE" />
+	        <xsd:attribute name="forceAction" type="xsd:boolean" default="false" />
         </xsd:complexType>
     </xsd:element>
 

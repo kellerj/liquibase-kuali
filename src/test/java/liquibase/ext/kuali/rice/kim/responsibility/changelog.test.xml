@@ -16,6 +16,8 @@
  -->
     <changeSet author="kellerj" id="ResponsibilityWithDefaults">
 		<kuali:createResponsibility namespaceCode="KFS-SYS" name="Dean/Vice Chancellor Review" documentType="KFS" routeNode="DeanOrViceChancellor" />      
+
+		<kuali:assignResponsibility documentType="KFS" routeNode="DeanOrViceChancellor" roleNamespaceCode="KFS-SYS" roleName="Manager" />      
     </changeSet>
 
 </databaseChangeLog>

@@ -15,6 +15,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
+import liquibase.statement.SqlStatement;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -54,26 +55,56 @@ public class ResponsibilityChangeTest extends RiceTestBase {
 //        // expectedQuery.add("ALTER TABLE addcheck ADD CONSTRAINT tom_check1 CHECK(id between 10 and 15) ENABLE");
 //        expectedQuery.add("ALTER TABLE LIQUIBASE.addcheck ADD CHECK(id between 0 and 5 ) DEFERRABLE INITIALLY DEFERRED DISABLE");
 //
-        ChangeSet changeSet = changeSets.get(0);
-        Change change = changeSet.getChanges().get(0);
-        Sql[] sql = SqlGeneratorFactory.getInstance().generateSql(change.generateStatements(database)[0], database);
-        System.out.println( sql[0].toSql() );
+        for ( ChangeSet changeSet : changeSets ) {
+        	for ( Change change : changeSet.getChanges() ) {
+        		SqlStatement[] statements = change.generateStatements(database);
+        		for ( SqlStatement statement : statements ) {
+	                Sql[] sqls = SqlGeneratorFactory.getInstance().generateSql(statement, database);
+	                for ( Sql sql : sqls ) {
+	                	System.out.println( sql.toSql() );
+	                }
+        		}
+        	}
+        }
+
         //assertEquals(expectedQuery.get(0), sql[0].toSql());
     }
 
-  @Test
-  public void BBB_testChangeLogExecution() throws Exception {
-	  Liquibase liquibase = new Liquibase(getChangeLogFile(), new ClassLoaderResourceAccessor(), jdbcConnection);
-      liquibase.update("null");
-  }
+	@Test
+	public void BBB_testChangeLogExecution() throws Exception {
+		Liquibase liquibase = new Liquibase(getChangeLogFile(),
+				new ClassLoaderResourceAccessor(), jdbcConnection);
+		liquibase.update("null");
+	}
 
-  @Test
-  public void ZZZ_rollbackChangelogExecution() throws Exception {
-	  Liquibase liquibase = new Liquibase(getChangeLogFile(), new ClassLoaderResourceAccessor(), jdbcConnection);
-      ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
-      ChangeLogParameters changeLogParameters = new ChangeLogParameters();
-      DatabaseChangeLog changeLog = ChangeLogParserFactory.getInstance().getParser(getChangeLogFile(), resourceAccessor)
-      		.parse(getChangeLogFile(),changeLogParameters, resourceAccessor);
-      liquibase.rollback(changeLog.getChangeSets().size(),"null");
-  }
+	@Test
+	public void ZZZ_rollbackChangelogExecution() throws Exception {
+		Liquibase liquibase = new Liquibase(getChangeLogFile(),
+				new ClassLoaderResourceAccessor(), jdbcConnection);
+		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
+		ChangeLogParameters changeLogParameters = new ChangeLogParameters();
+		DatabaseChangeLog changeLog = ChangeLogParserFactory
+				.getInstance()
+				.getParser(getChangeLogFile(), resourceAccessor)
+				.parse(getChangeLogFile(), changeLogParameters,
+						resourceAccessor);
+		liquibase.rollback(changeLog.getChangeSets().size(), "null");
+	}
+
+/*
+ * Cleanup SQL
+ *
+delete from DATABASECHANGELOGLOCK
+/
+delete from DATABASECHANGELOG
+WHERE id = 'ResponsibilityWithDefaults'
+/
+delete from KRIM_RSP_ATTR_DATA_T WHERE RSP_ID IN (SELECT RSP_ID from KRIM_RSP_T WHERE nm = 'Dean/Vice Chancellor Review')
+/
+DELETE FROM KRIM_ROLE_RSP_T WHERE RSP_ID = (SELECT RSP_ID FROM KRIM_RSP_T WHERE NMSPC_CD = 'KFS-SYS' AND NM = 'Dean/Vice Chancellor Review')
+/
+Delete from KRIM_RSP_T WHERE nm = 'Dean/Vice Chancellor Review'
+/
+DELETE FROM KRIM_RSP_ATTR_DATA_T WHERE RSP_ID = (SELECT RSP_ID FROM KRIM_RSP_T WHERE NMSPC_CD = 'KFS-SYS' AND NM = 'Dean/Vice Chancellor Review')
+ */
 }
