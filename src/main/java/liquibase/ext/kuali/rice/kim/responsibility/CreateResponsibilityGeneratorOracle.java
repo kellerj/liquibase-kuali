@@ -36,7 +36,7 @@ public class CreateResponsibilityGeneratorOracle extends CreateResponsibilityGen
 		if ( StringUtils.isNotBlank(statement.getId()) ) {
 			sql += "        rsp_id := '"+KimSqlGeneratorHelper.makeQuoteSafe(statement.getId())+"';\n";
 		} else {
-			sql += 	"        SELECT KRIM_ROLE_ID_S.NEXTVAL INTO next_id FROM dual;\n" +
+			sql += 	"        SELECT KRIM_RSP_ID_S.NEXTVAL INTO next_id FROM dual;\n" +
 					"        rsp_id := '"+KimSqlGeneratorHelper.makeQuoteSafe(statement.getApplicationId())+"'||next_id;\n";
 		}
 		sql +=
