@@ -38,13 +38,17 @@ Implemented Extensions
 
 ## Summary
 
-| Tag Name                       | Rollback? | Purpose |
-| ------------------------------ | --------- | ------- |
-| `<kuali:createRole>`           | Yes       | Creates a role of the given type, auto-generating the ID if needed. |
-| `<kuali:createParameter>`      | Yes       | Create a parameter in the KRCR_PARM_T table.
-| `<kuali:importWorkflow>`       | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
-| `<kuali:createResponsibility>` | Yes       |
-| `<kuali:assignResponsibility>` | Yes       | 
+| Tag Name                               | Rollback? | Purpose |
+| -------------------------------------- | --------- | ------- |
+| `kuali:createRole`                     | Yes       | Creates a role of the given type, auto-generating the ID if needed. |
+| `kuali:createParameter`                | Yes       | Create a parameter in the KRCR_PARM_T table.
+| `kuali:importWorkflow`                 | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
+| `kuali:createResponsibility`           | Yes       | |
+| `kuali:assignResponsibility`           | Yes       | | 
+| `kuali:createKimType`                  | Yes       | |
+| `kuali:deleteResponsibility`           | **No**    | |
+| `kuali:deleteResponsibilityAssignment` | **No**    | |
+| `kuali:deleteKimType`                  | **No**    | |
 
 ## KNS Data
 
@@ -75,12 +79,24 @@ The given paths are relative to the directory of the changelog file.  So, if the
 
 ## KIM Data
 
+### Create KIM Type
+
+	<kuali:createKimType namespaceCode="KFS-SYS" 
+	                     name="Organization-Based Derived Role" 
+	                     typeId="ORG_DERIVED" <!-- (optional) -->
+			               serviceName="{http://kfs.kuali.org/kfs/v5_0}organizationBasedDerivedRoleTypeService">
+		<kuali:kimAttribute name="chartOfAccountsCode" />
+		<kuali:kimAttribute name="organizationCode" />
+		<kuali:kimAttribute name="accountNumber" />
+	</kuali:createKimType>
+	
+
 ### Create Role
 
 	<kuali:createRole applicationId="KFS" 
 					  roleNamespaceCode="KFS-SYS"
 					  roleName="" 
-					  roleId="" (optional)
+					  roleId="" <!-- (optional) -->
 					  roleTypeNamespace="KUALI"
 					  roleTypeName="Default"
   					  roleDescription="" />
@@ -103,6 +119,7 @@ The given paths are relative to the directory of the changelog file.  So, if the
 								routeNode="DeanOrViceChancellor" 
 								roleNamespaceCode="KFS-SYS" 
 								roleName="Manager" />
+								
 ### Delete Responsibility Assignment
 
 	<kuali:deleteResponsibilityAssignment documentType="KFS" 
@@ -131,13 +148,13 @@ Planned Extensions
 	* Responsibilities
 		* Create Responsibility - DONE
 		* Assign Responsibility to Role - DONE
-		* Delete Role-Responsibility Link
+		* Delete Role-Responsibility Link - DONE
 		* Inactivate Role-Responsibility Link
 		* Modify Responsibility
 		* Inactivate Responsibility
 		* Delete Responsibility
 		* Exception Responsibility Creation
-	* Create KIM Type
+	* Create KIM Type - DONE
 	* Create KIM Attribute
 * KNS Data
 	* Update Parameter
