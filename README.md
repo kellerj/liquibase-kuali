@@ -38,11 +38,13 @@ Implemented Extensions
 
 ## Summary
 
-| Tag Name                  | Rollback? | Purpose |
-| ------------------------- | --------- | ------- |
-| `<kuali:createRole>`      | Yes       | Creates a role of the given type, auto-generating the ID if needed. |
-| `<kuali:createParameter>` | Yes       | Create a parameter in the KRCR_PARM_T table.
-| `<kuali:importWorkflow>`  | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
+| Tag Name                       | Rollback? | Purpose |
+| ------------------------------ | --------- | ------- |
+| `<kuali:createRole>`           | Yes       | Creates a role of the given type, auto-generating the ID if needed. |
+| `<kuali:createParameter>`      | Yes       | Create a parameter in the KRCR_PARM_T table.
+| `<kuali:importWorkflow>`       | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
+| `<kuali:createResponsibility>` | Yes       |
+| `<kuali:assignResponsibility>` | Yes       | 
 
 ## KNS Data
 
@@ -83,18 +85,63 @@ The given paths are relative to the directory of the changelog file.  So, if the
 					  roleTypeName="Default"
   					  roleDescription="" />
 
+### Create Responsibility
+
+	<kuali:createResponsibility namespaceCode="KFS-SYS" 
+								name="Dean/Vice Chancellor Review" 
+								documentType="KFS" 
+								routeNode="DeanOrViceChancellor" />
+      
+### Delete Responsibility
+
+	<kuali:deleteResponsibility namespaceCode="KFS-SYS" 
+								name="Dean/Vice Chancellor Review"  />
+
+### Assign Responsibility
+
+	<kuali:assignResponsibility documentType="KFS" 
+								routeNode="DeanOrViceChancellor" 
+								roleNamespaceCode="KFS-SYS" 
+								roleName="Manager" />
+### Delete Responsibility Assignment
+
+	<kuali:deleteResponsibilityAssignment documentType="KFS" 
+										  routeNode="DeanOrViceChancellor" 
+										  roleNamespaceCode="KFS-SYS" 
+										  roleName="Manager" />
 
 Planned Extensions
 ==================
 
-* Modification of Roles
-* Inactivation/Removal of Roles
-* Addition/Inactivation of role members
-* Create/Modify Permissions
-* Create/Modify Responsibilities
-* Create KIM Types / Attributes
-* Update/Remove Parameters
-* Permission-Role Assignment
-* Responsibility-Role Assignment
-* Exception Responsibility Creation
+* KIM Data
+	* Roles
+		* Modification of Roles
+		* Inactivation/Removal of Roles
+		* Add Role Member
+		* Inactivate Role Member
+		* Delete Role Member
+	* Permissions
+		* Create Permission
+		* Modify Permission
+		* Inactivate Permission
+		* Delete Permission
+		* Assign Permission to Role
+		* Delete Role-Permission Link
+		* Inactivate Role-Permission Link
+	* Responsibilities
+		* Create Responsibility - DONE
+		* Assign Responsibility to Role - DONE
+		* Delete Role-Responsibility Link
+		* Inactivate Role-Responsibility Link
+		* Modify Responsibility
+		* Inactivate Responsibility
+		* Delete Responsibility
+		* Exception Responsibility Creation
+	* Create KIM Type
+	* Create KIM Attribute
+* KNS Data
+	* Update Parameter
+	* Remove Parameter
+	* Append to Parameter Value
+	* Replace Within Parameter Value
 * Multi-Database Support (initial work is Oracle-specific)

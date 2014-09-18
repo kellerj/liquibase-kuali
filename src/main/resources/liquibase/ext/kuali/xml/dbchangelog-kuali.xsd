@@ -97,6 +97,14 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="deleteResponsibilityAssignment">
+        <xsd:complexType>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+	        <xsd:attribute name="documentType" type="riceNameString" use="required" />
+	        <xsd:attribute name="routeNode" type="riceNameString" use="required" />
+        </xsd:complexType>
+    </xsd:element>
+
 	<xsd:simpleType name="componentType">
 		<xsd:restriction base="xsd:string">
 			<xsd:maxLength value="100" />
