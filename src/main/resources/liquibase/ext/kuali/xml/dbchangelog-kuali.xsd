@@ -5,12 +5,30 @@
             xmlns="http://www.liquibase.org/xml/ns/dbchangelog-kuali"
             elementFormDefault="qualified">
 
+	<!-- 
+	   - KEW Update Tags
+	   -
+	   -
+	   -
+	   -
+	   -
+	   -->
+
     <xsd:element name="importWorkflow">
         <xsd:complexType>
 	        <xsd:attribute name="fileName" type="xsd:string"/>
 	        <xsd:attribute name="directoryName" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
+
+	<!-- 
+	   - Common Types
+	   -
+	   -
+	   -
+	   -
+	   -
+	   -->
 
 	<xsd:simpleType name="namespaceType">
 		<xsd:restriction base="xsd:string">
@@ -45,6 +63,53 @@
         <xsd:attribute name="roleName" type="riceNameString" use="required"/>
     </xsd:attributeGroup>
 
+    <xsd:simpleType name="WorkflowActionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="APPROVE" />
+            <xsd:enumeration value="ACKNOWLEDGE" />
+            <xsd:enumeration value="FYI" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+	<!-- 
+	   - KIM Refactoring Tags
+	   -
+	   -
+	   -
+	   -
+	   -
+	   -->
+
+	<!-- 
+		KIM Type Tags
+		 -->
+    <xsd:element name="createKimType">
+        <xsd:complexType>
+	        <xsd:sequence>
+	        	<xsd:element name="kimAttribute" minOccurs="0" maxOccurs="unbounded">
+	        		<xsd:complexType>
+	        			<xsd:attribute name="name" type="riceNameString" use="required" />
+	        		</xsd:complexType>
+	        	</xsd:element>
+	        </xsd:sequence>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+	        <xsd:attribute name="serviceName" type="xsd:string" />
+	        <xsd:attribute name="typeId" type="riceIdentifierString" />
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="deleteKimType">
+        <xsd:complexType>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+	<!-- 
+		Role Tags
+		 -->
     <xsd:element name="createRole">
         <xsd:complexType>
         	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
@@ -57,6 +122,9 @@
     </xsd:element>
 
 
+	<!-- 
+		Responsibility Tags
+		 -->
     <xsd:element name="createResponsibility">
         <xsd:complexType>
         	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
@@ -78,14 +146,6 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:simpleType name="WorkflowActionType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="APPROVE" />
-            <xsd:enumeration value="ACKNOWLEDGE" />
-            <xsd:enumeration value="FYI" />
-        </xsd:restriction>
-    </xsd:simpleType>
-
     <xsd:element name="assignResponsibility">
         <xsd:complexType>
         	<xsd:attribute name="applicationId" type="namespaceType" default="KFS" />
@@ -104,6 +164,15 @@
 	        <xsd:attribute name="routeNode" type="riceNameString" use="required" />
         </xsd:complexType>
     </xsd:element>
+
+	<!-- 
+	   - KNS Update Tags
+	   -
+	   -
+	   -
+	   -
+	   -
+	   -->
 
 	<xsd:simpleType name="componentType">
 		<xsd:restriction base="xsd:string">

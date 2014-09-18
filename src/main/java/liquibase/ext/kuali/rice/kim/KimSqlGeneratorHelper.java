@@ -8,6 +8,9 @@ public class KimSqlGeneratorHelper {
 
 
 	public static String makeQuoteSafe( String value ) {
+		if ( value == null ) {
+			return "";
+		}
 		return StringUtils.replace(value, "'", "''");
 	}
 
