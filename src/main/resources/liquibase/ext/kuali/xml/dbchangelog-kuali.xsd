@@ -166,6 +166,20 @@
     </xsd:element>
 
 	<!-- 
+		Permission Tags
+		 -->
+
+    <xsd:element name="assignPermission">
+        <xsd:complexType>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS" />
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+
+	<!-- 
 	   - KNS Update Tags
 	   -
 	   -

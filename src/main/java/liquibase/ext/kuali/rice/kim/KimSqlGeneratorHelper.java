@@ -49,4 +49,16 @@ public class KimSqlGeneratorHelper {
 				"        RETURN id;\n" +
 				"    END;\n";
 	}
+
+	public static String getPermissionIdFunctionSql() {
+		return "    FUNCTION get_permission_id( Namespace IN VARCHAR2, Name IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
+				"        id VARCHAR2(40);\n" +
+				"    BEGIN\n" +
+				"        SELECT perm_id\n" +
+				"            INTO id\n" +
+				"            FROM KRIM_PERM_T\n" +
+				"            WHERE nmspc_cd = Namespace AND nm = Name;\n" +
+				"        RETURN id;\n" +
+				"    END;\n";
+	}
 }
