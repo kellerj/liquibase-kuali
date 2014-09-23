@@ -14,11 +14,16 @@
         http://www.liquibase.org/xml/ns/dbchangelog-kuali ../../../../../../../../main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd ">
 
  -->
+    <changeSet author="kellerj" id="PermissionTest_Create">
+	    <kuali:createPermission namespaceCode="KFS-SYS" name="Review Ledgers" 
+	    		permissionTemplateNamespaceCode="KUALI" 
+	    		permissionTemplateName="Default" />
+	    		
+	    <kuali:createPermission namespaceCode="KFS-SYS" name="Add Ledger Review Note" />	    		
+    </changeSet>
+
     <changeSet author="kellerj" id="PermissionTest_Assign">
-<!-- 		<kuali:createResponsibility namespaceCode="KFS-SYS" name="Dean/Vice Chancellor Review" documentType="KFS" routeNode="DeanOrViceChancellor" /> -->      
-
 		<kuali:assignPermission namespaceCode="KFS-LD" name="View Labor Data" roleNamespaceCode="KFS-SYS" roleName="Fiscal Officer" />
-
     </changeSet>
 
 </databaseChangeLog>

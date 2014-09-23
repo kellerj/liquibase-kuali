@@ -169,6 +169,23 @@
 		Permission Tags
 		 -->
 
+    <xsd:element name="createPermission">
+        <xsd:complexType>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS" />
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+	        <xsd:attribute name="permissionTemplateNamespaceCode" type="namespaceType" use="optional" default="KUALI"/>
+	        <xsd:attribute name="permissionTemplateName" type="riceNameString" use="optional" default="Default" />
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="deletePermission">
+        <xsd:complexType>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:element name="assignPermission">
         <xsd:complexType>
         	<xsd:attribute name="applicationId" type="namespaceType" default="KFS" />

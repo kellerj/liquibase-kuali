@@ -45,10 +45,12 @@ Implemented Extensions
 | `kuali:importWorkflow`                 | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
 | `kuali:createResponsibility`           | Yes       | |
 | `kuali:assignResponsibility`           | Yes       | | 
+| `kuali:createPermission`               | Yes       | |
 | `kuali:assignPermission`               | Yes       | | 
 | `kuali:createKimType`                  | Yes       | |
 | `kuali:deleteResponsibility`           | **No**    | |
 | `kuali:deleteResponsibilityAssignment` | **No**    | |
+| `kuali:deletePermission`               | **No**    | |
 | `kuali:deletePermissionAssignment`     | **No**    | |
 | `kuali:deleteKimType`                  | **No**    | |
 
@@ -111,6 +113,18 @@ The given paths are relative to the directory of the changelog file.  So, if the
 
 ### Permissions
 
+#### Create Permission
+
+    <kuali:createPermission namespaceCode="KFS-SYS" name="Review Ledgers" 
+				    		permissionTemplateNamespaceCode="KUALI" 
+				    		permissionTemplateName="Default" />
+	 
+**TODO** : Addition of Attributes		
+
+#### Delete Permission
+
+    <kuali:deletePermission namespaceCode="KFS-SYS" name="Add Ledger Review Note" />
+    
 #### Assign Permission
 
 	<kuali:assignPermission namespaceCode="KFS-LD" 
