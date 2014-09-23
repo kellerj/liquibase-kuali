@@ -45,10 +45,15 @@ Implemented Extensions
 | `kuali:importWorkflow`                 | **No**    | Imports the workflow XML files in a particular file or directory of files.  **Presently requires a checkout of KFS for use of the `import-workflow-xml` Ant target.** |
 | `kuali:createResponsibility`           | Yes       | |
 | `kuali:assignResponsibility`           | Yes       | | 
+| `kuali:assignPermission`               | Yes       | | 
 | `kuali:createKimType`                  | Yes       | |
 | `kuali:deleteResponsibility`           | **No**    | |
 | `kuali:deleteResponsibilityAssignment` | **No**    | |
+| `kuali:deletePermissionAssignment`     | **No**    | |
 | `kuali:deleteKimType`                  | **No**    | |
+
+Example Usages
+==============
 
 ## KNS Data
 
@@ -79,6 +84,8 @@ The given paths are relative to the directory of the changelog file.  So, if the
 
 ## KIM Data
 
+### General
+
 ### Create KIM Type
 
 	<kuali:createKimType namespaceCode="KFS-SYS" 
@@ -90,8 +97,9 @@ The given paths are relative to the directory of the changelog file.  So, if the
 		<kuali:kimAttribute name="accountNumber" />
 	</kuali:createKimType>
 	
+### Roles
 
-### Create Role
+#### Create Role
 
 	<kuali:createRole applicationId="KFS" 
 					  roleNamespaceCode="KFS-SYS"
@@ -101,26 +109,44 @@ The given paths are relative to the directory of the changelog file.  So, if the
 					  roleTypeName="Default"
   					  roleDescription="" />
 
-### Create Responsibility
+### Permissions
+
+#### Assign Permission
+
+	<kuali:assignPermission namespaceCode="KFS-LD" 
+							name="View Labor Data" 
+							roleNamespaceCode="KFS-SYS" 
+							roleName="Fiscal Officer" />
+								
+#### Delete Permission Assignment
+
+	<kuali:deletePermissionAssignment namespaceCode="KFS-LD" 
+									  name="View Labor Data" 
+									  roleNamespaceCode="KFS-SYS" 
+									  roleName="Fiscal Officer" />
+
+### Responsibilities
+
+#### Create Responsibility
 
 	<kuali:createResponsibility namespaceCode="KFS-SYS" 
 								name="Dean/Vice Chancellor Review" 
 								documentType="KFS" 
 								routeNode="DeanOrViceChancellor" />
       
-### Delete Responsibility
+#### Delete Responsibility
 
 	<kuali:deleteResponsibility namespaceCode="KFS-SYS" 
 								name="Dean/Vice Chancellor Review"  />
 
-### Assign Responsibility
+#### Assign Responsibility
 
 	<kuali:assignResponsibility documentType="KFS" 
 								routeNode="DeanOrViceChancellor" 
 								roleNamespaceCode="KFS-SYS" 
 								roleName="Manager" />
 								
-### Delete Responsibility Assignment
+#### Delete Responsibility Assignment
 
 	<kuali:deleteResponsibilityAssignment documentType="KFS" 
 										  routeNode="DeanOrViceChancellor" 
@@ -142,8 +168,8 @@ Planned Extensions
 		* Modify Permission
 		* Inactivate Permission
 		* Delete Permission
-		* Assign Permission to Role
-		* Delete Role-Permission Link
+		* Assign Permission to Role - DONE
+		* Delete Role-Permission Link - DONE
 		* Inactivate Role-Permission Link
 	* Responsibilities
 		* Create Responsibility - DONE

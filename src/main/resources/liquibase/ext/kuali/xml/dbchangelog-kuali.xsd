@@ -178,6 +178,13 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="deletePermissionAssignment">
+        <xsd:complexType>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+	        <xsd:attribute name="namespaceCode" type="namespaceType" use="required"/>
+	        <xsd:attribute name="name" type="riceNameString" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
 
 	<!-- 
 	   - KNS Update Tags
