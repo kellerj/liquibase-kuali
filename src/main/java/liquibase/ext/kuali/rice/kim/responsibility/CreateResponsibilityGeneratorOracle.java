@@ -61,11 +61,11 @@ public class CreateResponsibilityGeneratorOracle extends CreateResponsibilityGen
 				"        attr_id := get_attribute_id( 'required' );\n" +
 				"        INSERT INTO KRIM_RSP_ATTR_DATA_T(ATTR_DATA_ID, OBJ_ID, RSP_ID, KIM_TYP_ID, KIM_ATTR_DEFN_ID, ATTR_VAL) \n" +
 				"            VALUES(rsp_id||'-REQ', SYS_GUID(), rsp_id, type_id, attr_id, '"+
-				(statement.isRoutingRequired()?"Y":"N")+"');\n" +
+				(statement.isRoutingRequired()?"true":"false")+"');\n" +
 				"\n" +
 				"        attr_id := get_attribute_id( 'actionDetailsAtRoleMemberLevel' );\n" +
 				"        INSERT INTO KRIM_RSP_ATTR_DATA_T(ATTR_DATA_ID, OBJ_ID, RSP_ID, KIM_TYP_ID, KIM_ATTR_DEFN_ID, ATTR_VAL) \n" +
-				"            VALUES(rsp_id||'-RML', SYS_GUID(), rsp_id, type_id, attr_id, '"+(statement.isActionDetailsAtRowMemberLevel()?"Y":"N")+"');\n" +
+				"            VALUES(rsp_id||'-RML', SYS_GUID(), rsp_id, type_id, attr_id, '"+(statement.isActionDetailsAtRowMemberLevel()?"true":"false")+"');\n" +
 				"    END;";
 
         return new Sql[]{
