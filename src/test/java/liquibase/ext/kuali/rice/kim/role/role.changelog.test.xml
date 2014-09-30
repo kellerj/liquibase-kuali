@@ -35,4 +35,17 @@
 		</kuali:addRoleMember>        
     </changeSet>
 
+    <changeSet author="kellerj" id="TestDropRoleMembers">
+		<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="kellerj" />
+				
+		<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+			<kuali:attribute name="chartOfAccountsCode" value="3" />
+			<kuali:attribute name="organizationCode" value="ACCT" />
+		</kuali:deleteRoleMember>        
+				        
+		<kuali:inactivateRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="sbcortes" />        
+	</changeSet>
 </databaseChangeLog>

@@ -3,12 +3,12 @@ package liquibase.ext.kuali.rice.kim.role.generator;
 import liquibase.database.Database;
 import liquibase.database.core.OracleDatabase;
 import liquibase.ext.kuali.rice.kim.KimSqlGeneratorHelper;
-import liquibase.ext.kuali.rice.kim.role.statement.DeleteRoleMemberStatement;
+import liquibase.ext.kuali.rice.kim.role.statement.InactivateRoleMemberStatement;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 
-public class DeleteRoleMemberGeneratorOracle extends DeleteRoleMemberGenerator {
+public class InactivateRoleMemberGeneratorOracle extends InactivateRoleMemberGenerator {
 
     @Override
     public int getPriority() {
@@ -16,13 +16,13 @@ public class DeleteRoleMemberGeneratorOracle extends DeleteRoleMemberGenerator {
     }
 
 	@Override
-	public boolean supports(DeleteRoleMemberStatement statement,
+	public boolean supports(InactivateRoleMemberStatement statement,
 			Database database) {
 		return database instanceof OracleDatabase;
 	}
 
 	@Override
-	public Sql[] generateSql(DeleteRoleMemberStatement statement,
+	public Sql[] generateSql(InactivateRoleMemberStatement statement,
 			Database database, SqlGeneratorChain sqlGeneratorChain) {
 		String sql = "DECLARE \n" +
 				"   mbr_id      VARCHAR2(40);\n";
@@ -38,8 +38,9 @@ public class DeleteRoleMemberGeneratorOracle extends DeleteRoleMemberGenerator {
 		sql +=	"BEGIN\n"
 				+ RoleMemberGeneratorHelper.getMemberIdSqlFragment(statement)
 				+ "   FOR rec IN role_members( mbr_id ) LOOP\n "
-				+ "      DELETE FROM krim_role_mbr_attr_data_t WHERE role_mbr_id = rec.role_mbr_id;\n"
-				+ "      DELETE FROM krim_role_mbr_t WHERE role_mbr_id = rec.role_mbr_id;\n"
+				+ "      UPDATE krim_role_mbr_t \n"
+				+ "         SET actv_to_dt = " + KimSqlGeneratorHelper.toOracleDate(statement.getInactiveDate(),"TRUNC(SYSDATE)")
+				+ "      WHERE role_mbr_id = rec.role_mbr_id;\n"
 				+ "   END LOOP;\n";
 		sql +=  "END;";
 

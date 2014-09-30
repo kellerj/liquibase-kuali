@@ -1,5 +1,8 @@
 package liquibase.ext.kuali.rice.kim;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 
 public class KimSqlGeneratorHelper {
@@ -12,6 +15,17 @@ public class KimSqlGeneratorHelper {
 			return "";
 		}
 		return StringUtils.replace(value, "'", "''");
+	}
+
+	public static String toOracleDate( Date date ) {
+		return toOracleDate(date, "NULL");
+	}
+
+	public static String toOracleDate( Date date, String defaultExpression ) {
+		if ( date == null ) {
+			return defaultExpression;
+		}
+		return "TO_DATE( '" + new SimpleDateFormat("yyyy-MM-dd").format(date) + "', 'YYYY-MM-DD' )";
 	}
 
 	public static String getKimTypeIdFunctionSql() {
@@ -85,7 +99,7 @@ public class KimSqlGeneratorHelper {
 				"        RETURN id;\n" +
 				"    END;\n";
 	}
-	
+
 	public static String getPermissionIdFunctionSql() {
 		return "    FUNCTION get_permission_id( Namespace IN VARCHAR2, Name IN VARCHAR2 ) RETURN VARCHAR2 IS\n" +
 				"        id VARCHAR2(40);\n" +

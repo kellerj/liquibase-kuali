@@ -154,6 +154,28 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="deleteRoleMember">
+        <xsd:complexType>
+        	<xsd:sequence>
+        		<xsd:element name="attribute" type="KimAttributeType" minOccurs="0" maxOccurs="unbounded" />
+        	</xsd:sequence>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+        	<xsd:attributeGroup ref="roleMemberIdentifier"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="inactivateRoleMember">
+        <xsd:complexType>
+        	<xsd:sequence>
+        		<xsd:element name="attribute" type="KimAttributeType" minOccurs="0" maxOccurs="unbounded" />
+        	</xsd:sequence>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+        	<xsd:attributeGroup ref="roleMemberIdentifier"/>
+        	<xsd:attribute name="inactiveDate" type="xsd:date" />
+        </xsd:complexType>
+    </xsd:element>
 
 	<!-- 
 		Responsibility Tags
