@@ -63,11 +63,25 @@
         <xsd:attribute name="roleName" type="riceNameString" use="required"/>
     </xsd:attributeGroup>
 
+	<xsd:attributeGroup name="roleMemberIdentifier">
+        <xsd:attribute name="memberType"      type="RoleMemberType" use="required"/>
+        <xsd:attribute name="memberName"      type="riceNameString" use="required"/>
+        <xsd:attribute name="memberNamespace" type="namespaceType"  use="optional"/>
+    </xsd:attributeGroup>
+
     <xsd:simpleType name="WorkflowActionType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="APPROVE" />
             <xsd:enumeration value="ACKNOWLEDGE" />
             <xsd:enumeration value="FYI" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="RoleMemberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PERSON" />
+            <xsd:enumeration value="ROLE" />
+            <xsd:enumeration value="GROUP" />
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -110,6 +124,7 @@
 	<!-- 
 		Role Tags
 		 -->
+
     <xsd:element name="createRole">
         <xsd:complexType>
         	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
@@ -118,6 +133,24 @@
 	        <xsd:attribute name="roleTypeName" type="riceNameString" default="Default"/>
 	        <xsd:attribute name="roleDescription" type="riceDescriptionString" />
 	        <xsd:attribute name="roleId" type="riceIdentifierString" />
+        </xsd:complexType>
+    </xsd:element>
+
+	<xsd:complexType name="KimAttributeType">
+        <xsd:attribute name="name" type="riceNameString" use="required" />
+        <xsd:attribute name="value" type="riceDescriptionString" use="required" />
+	</xsd:complexType>
+
+    <xsd:element name="addRoleMember">
+        <xsd:complexType>
+        	<xsd:sequence>
+        		<xsd:element name="attribute" type="KimAttributeType" minOccurs="0" maxOccurs="unbounded" />
+        	</xsd:sequence>
+        	<xsd:attribute name="applicationId" type="namespaceType" default="KFS"/>
+        	<xsd:attributeGroup ref="roleIdentifier"/>
+        	<xsd:attributeGroup ref="roleMemberIdentifier"/>
+        	<xsd:attribute name="activeDate" type="xsd:date" />
+        	<xsd:attribute name="inactiveDate" type="xsd:date" />
         </xsd:complexType>
     </xsd:element>
 
