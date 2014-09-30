@@ -8,12 +8,22 @@
         http://www.liquibase.org/xml/ns/dbchangelog-kuali src/main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd">
 <!-- 
 
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog src/main/resources/liquibase/ext/kuali/xml/dbchangelog-3.2.xsd 
+        http://www.liquibase.org/xml/ns/dbchangelog-kuali src/main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd">
+
 
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../../../../../../main/resources/liquibase/ext/kuali/xml/dbchangelog-3.2.xsd 
         http://www.liquibase.org/xml/ns/dbchangelog-kuali ../../../../../../main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd ">
  -->
     <changeSet author="kellerj" id="CreateDefaultRole">
 		<kuali:createRole roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1" />        
+    </changeSet>
+
+    <changeSet author="kellerj" id="TestAddRoleMembers">
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="kellerj" />        
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="sbcortes" activeDate="2014-10-31" />        
     </changeSet>
 
 </databaseChangeLog>
