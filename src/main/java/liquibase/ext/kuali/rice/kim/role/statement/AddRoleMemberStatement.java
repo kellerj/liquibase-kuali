@@ -6,6 +6,9 @@ import liquibase.ext.kuali.rice.kim.role.change.AddRoleMemberChange;
 
 public class AddRoleMemberStatement extends RoleMemberStatementBase {
 
+	protected Date activeDate;
+	protected Date inactiveDate;
+
 	public AddRoleMemberStatement() {}
 	
 	public AddRoleMemberStatement( AddRoleMemberChange change ) {
@@ -13,9 +16,6 @@ public class AddRoleMemberStatement extends RoleMemberStatementBase {
 		activeDate = change.getActiveDate();
 		inactiveDate = change.getInactiveDate();
 	}
-	
-	protected Date activeDate;
-	protected Date inactiveDate;
 
 	public Date getActiveDate() {
 		return activeDate;

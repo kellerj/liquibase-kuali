@@ -42,7 +42,7 @@ public abstract class RoleMemberChangeBase extends RoleChangeBase {
 	}
 	
 	protected void addAttribute( String name, String value ) {
-		attributes.put(name, value);
+		getAttributes().put(name, value);
 	}
 	
 	@DatabaseChangeProperty
