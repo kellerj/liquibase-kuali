@@ -70,6 +70,9 @@ public abstract class RoleMemberChangeBase extends RoleChangeBase {
 	}
 
 	public Map<String, String> getAttributes() {
+		if ( attributes == null ) {
+			attributes = new HashMap<>();
+		}
 		return attributes;
 	}
 	public void setAttributes(Map<String, String> attributes) {
