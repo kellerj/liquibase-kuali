@@ -1,5 +1,7 @@
 package liquibase.ext.kuali.rice.kim.role.change;
 
+import org.apache.commons.lang.StringUtils;
+
 import liquibase.change.ChangeMetaData;
 import liquibase.change.DatabaseChange;
 import liquibase.database.Database;
@@ -18,7 +20,7 @@ public class DeleteRoleMemberChange extends RoleMemberChangeBase {
 	
 	@Override
 	public String getConfirmationMessage() {
-		return "Deleting " + memberType + " " + memberNamespace + " " + memberName + " to role " + roleNamespaceCode + " / " + roleName; 
+		return "Deleting " + memberType + " " + StringUtils.trimToEmpty(memberNamespace) + " " + memberName + " to role " + roleNamespaceCode + " / " + roleName; 
 	}
 
 	@Override

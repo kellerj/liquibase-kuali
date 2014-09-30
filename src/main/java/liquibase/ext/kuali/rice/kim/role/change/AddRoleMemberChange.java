@@ -2,6 +2,8 @@ package liquibase.ext.kuali.rice.kim.role.change;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import liquibase.change.Change;
 import liquibase.change.ChangeMetaData;
 import liquibase.change.DatabaseChange;
@@ -18,7 +20,7 @@ public class AddRoleMemberChange extends RoleMemberChangeBase {
 	
 	@Override
 	public String getConfirmationMessage() {
-		return "Adding " + memberType + " " + memberNamespace + " " + memberName + " to role " + roleNamespaceCode + " / " + roleName; 
+		return "Adding " + memberType + " " + StringUtils.trimToEmpty(memberNamespace) + " " + memberName + " to role " + roleNamespaceCode + " / " + roleName; 
 	}
 
 	@Override
