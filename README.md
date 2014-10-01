@@ -48,11 +48,14 @@ Implemented Extensions
 | `kuali:createPermission`               | Yes       | |
 | `kuali:assignPermission`               | Yes       | | 
 | `kuali:createKimType`                  | Yes       | |
+| `kuali:addRoleMember`                  | Yes       | |
 | `kuali:deleteResponsibility`           | **No**    | |
 | `kuali:deleteResponsibilityAssignment` | **No**    | |
 | `kuali:deletePermission`               | **No**    | |
 | `kuali:deletePermissionAssignment`     | **No**    | |
 | `kuali:deleteKimType`                  | **No**    | |
+| `kuali:deleteRoleMember`               | **No**    | |
+| `kuali:inactivateRoleMember`           | **No**    | |
 
 Example Usages
 ==============
@@ -109,7 +112,61 @@ The given paths are relative to the directory of the changelog file.  So, if the
 					  roleId="" <!-- (optional) -->
 					  roleTypeNamespace="KUALI"
 					  roleTypeName="Default"
-  					  roleDescription="" />
+					  roleDescription="" />
+
+#### Delete Role
+
+	<kuali:createRole
+					  roleNamespaceCode="KFS-SYS"
+					  roleName="" />
+
+#### Add Role Member
+
+	<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+		<kuali:attribute name="chartOfAccountsCode" value="3" />
+		<kuali:attribute name="organizationCode" value="ACCT" />
+	</kuali:addRoleMember>        
+
+---
+
+	<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="PERSON" memberName="sbcortes" activeDate="2014-10-31" />        
+---
+
+	<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="GROUP" memberName="ZBUYER1" memberNamespace="KFS-SYS">
+		<kuali:attribute name="chartOfAccountsCode" value="3" />
+	</kuali:addRoleMember>        
+
+
+#### Delete Role Member
+
+	<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="PERSON" memberName="kellerj" />
+
+---
+				
+	<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+		<kuali:attribute name="chartOfAccountsCode" value="3" />
+		<kuali:attribute name="organizationCode" value="ACCT" />
+	</kuali:deleteRoleMember>        
+
+
+#### Inactivate Role Member
+
+	<kuali:inactivateRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="PERSON" memberName="sbcortes" />        
+
+---
+
+	<kuali:inactivateRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+			memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+		<kuali:attribute name="chartOfAccountsCode" value="3" />
+		<kuali:attribute name="organizationCode" value="ACCT" />
+	</kuali:inactivateRoleMember>        
+
 
 ### Permissions
 

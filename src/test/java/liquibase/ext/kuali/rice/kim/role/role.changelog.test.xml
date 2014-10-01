@@ -8,6 +8,9 @@
         http://www.liquibase.org/xml/ns/dbchangelog-kuali src/main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd">
 <!-- 
 
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog src/main/resources/liquibase/ext/kuali/xml/dbchangelog-3.2.xsd 
+        http://www.liquibase.org/xml/ns/dbchangelog-kuali src/main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd">
+
 
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../../../../../../main/resources/liquibase/ext/kuali/xml/dbchangelog-3.2.xsd 
         http://www.liquibase.org/xml/ns/dbchangelog-kuali ../../../../../../main/resources/liquibase/ext/kuali/xml/dbchangelog-kuali.xsd ">
@@ -16,4 +19,33 @@
 		<kuali:createRole roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1" />        
     </changeSet>
 
+    <changeSet author="kellerj" id="TestAddRoleMembers">
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="kellerj" />        
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="sbcortes" activeDate="2014-10-31" />        
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="GROUP" memberName="ZBUYER1" memberNamespace="KFS-SYS">
+			<kuali:attribute name="chartOfAccountsCode" value="3" />
+		</kuali:addRoleMember>        
+		<kuali:addRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+			<kuali:attribute name="chartOfAccountsCode" value="3" />
+			<kuali:attribute name="organizationCode" value="ACCT" />
+		</kuali:addRoleMember>        
+    </changeSet>
+
+    <changeSet author="kellerj" id="TestDropRoleMembers">
+		<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="kellerj" />
+				
+		<kuali:deleteRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="ROLE" memberName="Purchasing User" memberNamespace="KFS-SYS">
+			<kuali:attribute name="chartOfAccountsCode" value="3" />
+			<kuali:attribute name="organizationCode" value="ACCT" />
+		</kuali:deleteRoleMember>        
+				        
+		<kuali:inactivateRoleMember roleNamespaceCode="KFS-SYS" roleName="ROLE_TEST_1"
+				memberType="PERSON" memberName="sbcortes" />        
+	</changeSet>
 </databaseChangeLog>
