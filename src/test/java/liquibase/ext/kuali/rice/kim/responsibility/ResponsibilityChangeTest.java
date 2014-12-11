@@ -3,6 +3,7 @@ package liquibase.ext.kuali.rice.kim.responsibility;
 import java.util.List;
 
 import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.change.Change;
 import liquibase.changelog.ChangeLogParameters;
@@ -44,7 +45,7 @@ public class ResponsibilityChangeTest extends RiceTestBase {
 
         DatabaseChangeLog changeLog = ChangeLogParserFactory.getInstance().getParser(getChangeLogFile(), resourceAccessor)
         		.parse(getChangeLogFile(),changeLogParameters, resourceAccessor);
-        liquibase.checkLiquibaseTables( false, changeLog, new Contexts() );
+        liquibase.checkLiquibaseTables( false, changeLog, new Contexts(), new LabelExpression() );
         changeLog.validate(database);
 
         List<ChangeSet> changeSets = changeLog.getChangeSets();
