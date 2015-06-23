@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
@@ -180,7 +181,8 @@ public class ImportWorkflowChange extends AbstractChange {
 				JavaProcess.exec("org.apache.tools.ant.Main",
 						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location").toString(),
 						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(),
-						null, args );
+						Arrays.asList(getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.additional.jvm.args").toString().split(",")), 
+						args );
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
