@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.ucdavis.kuali</groupId>
   <artifactId>liquibase-kuali</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>3.3.1-SNAPSHOT</version>
   <name>UCD Liquibase Extensions</name>
 
     <properties>
