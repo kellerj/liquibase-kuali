@@ -127,7 +127,7 @@ public class ImportWorkflowChange extends AbstractChange {
         File changeLogDir = new File( baseDir, getChangeSet().getChangeLog().getPhysicalFilePath() ).getParentFile();
         File workflowFile = new File( changeLogDir, fileName );
 
-        return workflowFile.getAbsolutePath().replace('\\','/').replaceFirst(baseDir.getAbsolutePath()+"/", "");
+        return workflowFile.getAbsolutePath().replace('\\','/').replaceFirst(baseDir.getAbsolutePath().replace('\\','/')+"/", "");
     }
 
     @Override
