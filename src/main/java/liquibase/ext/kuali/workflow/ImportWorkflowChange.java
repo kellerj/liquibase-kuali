@@ -164,14 +164,14 @@ public class ImportWorkflowChange extends AbstractChange {
 		    	args.add( "-Dworkflow.dir=" + tempDirectory.toString().replace('\\', '/') );
 		    	args.add( "-Ddatasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Ddatasource.username=" + database.getConnection().getConnectionUserName() );
-		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password" ) );
+		    	args.add( "-Ddatasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password", getChangeSet().getChangeLog() ) );
 		    	args.add( "-Drice.server.datasource.url=" + database.getConnection().getURL() );
 		    	args.add( "-Drice.server.datasource.username=" + database.getConnection().getConnectionUserName() );
-		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password") );
+		    	args.add( "-Drice.server.datasource.password=" + getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.database.password", getChangeSet().getChangeLog()) );
 		    	args.add( "-Djava.awt.headless=true" );
 		    	args.add( "-Dbuild.environment=wfimport" );
 		    	// just to speed things up if we have multiple workflow to run
-		    	Object value = getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.clean-already-run");
+		    	Object value = getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.clean-already-run", getChangeSet().getChangeLog());
 		    	if ( value == null ) {
 		    		args.add( "clean-all" );
 		    		getChangeSet().getChangeLog().getChangeLogParameters().set("import.workflow.clean-already-run", Boolean.TRUE);
@@ -179,9 +179,9 @@ public class ImportWorkflowChange extends AbstractChange {
 		    	args.add( "import-workflow-xml" );
 
 				JavaProcess.exec("org.apache.tools.ant.Main",
-						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location").toString(),
-						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath").toString(),
-						Arrays.asList(getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.additional.jvm.args").toString().split(",")), 
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.kfs.project.location", getChangeSet().getChangeLog()).toString(),
+						getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.classpath", getChangeSet().getChangeLog()).toString(),
+						Arrays.asList(getChangeSet().getChangeLog().getChangeLogParameters().getValue("import.workflow.additional.jvm.args", getChangeSet().getChangeLog()).toString().split(",")),
 						args );
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
